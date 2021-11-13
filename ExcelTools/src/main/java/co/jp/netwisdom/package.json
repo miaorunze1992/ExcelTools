@@ -1,22 +1,28 @@
 {
-  "user": {
-    "templateId": "1",
-    "userInfo": {
-      "visaNumber": "EG82142208EA",
-      "nationality": "1",
-      "name": "HU XIN",
-      "birthday": "1996-01-09",
-      "visaType": "4",
-      "visaMonths": "36",
-      "visaExpireDate": "2024-09-15",
-      "tel": "080-9402-8668",
-      "address": "横滨市鶴見区尻手2-1-55グランドステッジ鶴見204",
-      "graduateSchool": "東海大学",
-      "graduateDate": "2021-04",
-      "passportNumber": "E39598799",
-      "passportExpireDate": "2025-03-25",
-      "studyCondition": "1"
-    }
+  "templateId": "1",
+  "userInfo": {
+    "visaNumber": "EG82142208EA",
+    "nationality": "1",
+    "name": "HU XIN",
+    "birthYear": "1996",
+    "birthMont": "01",
+    "birthDay": "09",
+    "visaType": "4",
+    "visaMonths": "36",
+    "visaExpireYear":"2024",
+    "visaExpireMonth": "09",
+    "visaExpireDay": "15",
+    "visaExpireDate": "2024-09-15",
+    "tel": "080-9402-8668",
+    "address": "横滨市鶴見区尻手2-1-55グランドステッジ鶴見204",
+    "graduateSchool": "東海大学",
+    "graduateYear": "2021",
+    "graduateMonth": "04",
+    "passportNumber": "E39598799",
+    "passportExpireYear": "2025",
+    "passportExpireMonth": "03",
+    "passportExpireDay": "25",
+    "studyCondition": "1"
   }
 }
 

@@ -1,6 +1,5 @@
 package co.jp.netwisdom.controller;
 
-
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
@@ -11,7 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 
 import com.alibaba.fastjson.*;
 
@@ -21,26 +21,32 @@ import com.alibaba.fastjson.*;
 public class userController {
 
     String str = "{\n" +
-            "  \"user\": {\n" +
-            "    \"templateId\": \"001\",\n" +
-            "    \"userInfo\": {\n" +
-            "      \"visaNumber\": \"EG82142208EA\",\n" +
-            "      \"nationality\": \"1\",\n" +
-            "      \"name\": \"HU XIN\",\n" +
-            "      \"birthday\": \"1996-01-09\",\n" +
-            "      \"visaType\": \"4\",\n" +
-            "      \"visaMonths\": \"36\",\n" +
-            "      \"visaExpireDate\": \"2024-09-15\",\n" +
-            "      \"tel\": \"080-9402-8668\",\n" +
-            "      \"address\": \"横滨市鶴見区尻手2-1-55グランドステッジ鶴見204\",\n" +
-            "      \"graduateSchool\": \"東海大学\",\n" +
-            "      \"graduateDate\": \"2021-04\",\n" +
-            "      \"passportNumber\": \"E39598799\",\n" +
-            "      \"passportExpireDate\": \"2025-03-25\",\n" +
-            "      \"studyCondition\": \"1\"\n" +
-            "    }\n" +
+            "  \"templateId\": \"001\",\n" +
+            "  \"userInfo\": {\n" +
+            "    \"visaNumber\": \"EG82142208EA\",\n" +
+            "    \"nationality\": \"1\",\n" +
+            "    \"name\": \"HU XIN\",\n" +
+            "    \"birthYear\": \"1996\",\n" +
+            "    \"birthMonth\": \"01\",\n" +
+            "    \"birthDay\": \"09\",\n" +
+            "    \"visaType\": \"4\",\n" +
+            "    \"visaMonths\": \"36\",\n" +
+            "    \"visaExpireYear\":\"2024\",\n" +
+            "    \"visaExpireMonth\": \"09\",\n" +
+            "    \"visaExpireDay\": \"15\",\n" +
+            "    \"visaExpireDate\": \"2024-09-15\",\n" +
+            "    \"tel\": \"080-9402-8668\",\n" +
+            "    \"address\": \"横滨市鶴見区尻手2-1-55グランドステッジ鶴見204\",\n" +
+            "    \"graduateSchool\": \"東海大学\",\n" +
+            "    \"graduateYear\": \"2021\",\n" +
+            "    \"graduateMonth\": \"04\",\n" +
+            "    \"passportNumber\": \"E39598799\",\n" +
+            "    \"passportExpireYear\": \"2025\",\n" +
+            "    \"passportExpireMonth\": \"03\",\n" +
+            "    \"passportExpireDay\": \"25\",\n" +
+            "    \"studyCondition\": \"1\"\n" +
             "  }\n" +
-            "}";
+            "}\n";
 
     private static final String NW_EXCEL_001 = "在留资格変更申請"; // 在留资格変更申請
     private static final String NW_EXCEL_002 = "在留资格更新申請"; // 在留资格更新申請
@@ -52,43 +58,33 @@ public class userController {
      * 选择下载模板
      */
     @GetMapping("/downloadDocument")
-    //需要前端发来发来的json来进行操作，
-    //本类因为模拟，在类中写了一个json文件，所以不用在此方法的参数中写 JSONObject jsonObject
     public void downloadTemplate(HttpServletResponse response) throws Exception {
-        JSONObject jsonObject = JSONObject.parseObject(str);;
-        //接收前端发来的JSON的话
-        //需要写 jsonObject = jsonObject; 用本类中的JSON接收传来的JSON,这样方便，接下来方法的使用
-        // templateId未指定
-        JSONObject js = (JSONObject)jsonObject.get("user");
-        String templateId = js.get("templateId").toString();
-        System.out.println(templateId);
-        if (templateId == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
+        // 测试用,正常jsonObj从前台传入
+        JSONObject jsonObj = JSONObject.parseObject(str);
         // 资源路径
         String resourcePath;
-        // 根据前台templateId进行区分
-        switch (templateId) {
+        JSONObject ob = jsonObj.getJSONObject("userInfo");
+        // 根据前台templateId进行区分下载模板
+        switch (jsonObj.getString("templateId")) {
             case "001":
                 resourcePath = String.format("excelTemplate/%s.xlsx", "001");
-                downloadExcelFile(response, resourcePath, NW_EXCEL_001, (JSONObject) js.get("userInfo"));
+                downloadExcelFile(response, resourcePath, NW_EXCEL_001, ob);
                 break;
             case "002":
                 resourcePath = String.format("excelTemplate/%s.xlsx", "002");
-                downloadExcelFile(response, resourcePath, NW_EXCEL_002, (JSONObject) js.get("userInfo"));
+                downloadExcelFile(response, resourcePath, NW_EXCEL_002, ob);
                 break;
             case "003":
                 resourcePath = String.format("excelTemplate/%s.xlsx", "003");
-                downloadExcelFile(response, resourcePath, NW_EXCEL_003, (JSONObject) js.get("userInfo"));
+                downloadExcelFile(response, resourcePath, NW_EXCEL_003, ob);
                 break;
             case "004":
                 resourcePath = String.format("excelTemplate/%s.xlsx", "004");
-                downloadExcelFile(response, resourcePath, NW_WORD_004, (JSONObject) js.get("userInfo"));
+                downloadExcelFile(response, resourcePath, NW_WORD_004, ob);
                 break;
             case "005":
                 resourcePath = String.format("excelTemplate/%s.xlsx", "005");
-                downloadExcelFile(response, resourcePath, NW_WORD_005, (JSONObject) js.get("userInfo"));
+                downloadExcelFile(response, resourcePath, NW_WORD_005, ob);
                 break;
             default:
                 break;
@@ -115,12 +111,14 @@ public class userController {
                 for (int k = 0; k < row.getLastCellNum(); k++) {
                     // 获取Cell
                     Cell cell = row.getCell(k);
-                    changeCellCount(cell,jsonObject);
+                    if (cell != null && cell.getCellTypeEnum() == CellType.STRING) {
+                        changeCellCount(cell, jsonObject);
+                    }
                 }
             }
         }
         response.setContentType("application/vnd.ms-excel");
-        response.setHeader("content-Disposition", "attachment;excelName=" + URLEncoder.encode(excelName + ".xlsx", "utf-8"));
+        response.setHeader("content-Disposition", "attachment;filename=" + URLEncoder.encode(excelName + ".xlsx", "utf-8"));
         OutputStream outputStream = response.getOutputStream();
 
         workbook.write(outputStream);
@@ -130,90 +128,39 @@ public class userController {
 
     }
 
-    //针对前台数据，需要针对性替换
+    /**
+     * @param cell       单元格对象
+     * @param jsonObject json对象
+     */
     public static void changeCellCount(Cell cell, JSONObject jsonObject) {
-        if (cell != null && cell.getCellTypeEnum() == CellType.STRING) {
+        List<String> perchList = Arrays.asList(
+                "${visaNumber}",    // パスポートナンバー
+                "${nationality}",   // 国籍
+                "${name}",  // 氏名
+                "${birthYear}", // 出生月日
+                "${birthMonth}",
+                "${birthDay}",
+                "${visaType}",  // 現に有する在留資格
+                "${visaMonths}",    // 在留期限
+                "${visaExpireYear}",    // 在留期間の満了日
+                "${visaExpireMonth}",
+                "${visaExpireDay}",
+                "${tel}",   // 携帯電話
+                "${address}",   // 住居地
+                "${graduateSchool}",    // 学校名
+                "${graduateYear}",  // 卒業年月
+                "${graduateMonth}",
+                "${passportNumber}",    // パスポートナンバー
+                "${passportExpireYear}",    // 有効期限
+                "${passportExpireMonth}",
+                "${passportExpireDay}");
 
-            //パスポートナンバー
-            if (cell.getStringCellValue().equals("${visaNumber}")) {
-                cell.setCellValue(jsonObject.getString("visaNumber"));
+        for (String str : perchList) {
+            if (cell.getStringCellValue().equals(str)) {
+                cell.setCellValue(jsonObject.getString(str
+                        .replace("${", "")
+                        .replace("}", "")));
             }
-            //国籍
-            if (cell.getStringCellValue().equals("${nationality}")) {
-                cell.setCellValue(jsonObject.getString("nationality"));
-            }
-            //氏名
-            if (cell.getStringCellValue().equals("${name}")) {
-                cell.setCellValue(jsonObject.getString("name"));
-            }
-            //出生月日
-            String birthday = jsonObject.getString("birthday");
-            if (cell.getStringCellValue().equals("${birthYear}")) {
-                cell.setCellValue(birthday.substring(0, 4));
-            }
-
-            if (cell.getStringCellValue().equals("${birthMonth}")) {
-                cell.setCellValue(birthday.substring(5, 7));
-            }
-            if (cell.getStringCellValue().equals("${birthDay}")) {
-                cell.setCellValue(birthday.substring(8));
-            }
-            //現に有する在留資格
-            if (cell.getStringCellValue().equals("${visaType}")) {
-                cell.setCellValue(jsonObject.getString("visaType"));
-            }
-            //在留期限
-            if (cell.getStringCellValue().equals("${visaMonths}")) {
-                cell.setCellValue(jsonObject.getString("visaMonths"));
-            }
-            //在留期間の満了日
-            String visaExpireDate = jsonObject.getString("visaExpireDate");
-            if (cell.getStringCellValue().equals("${visaExpireYear}")) {
-                cell.setCellValue(visaExpireDate.substring(0, 4));
-            }
-            if (cell.getStringCellValue().equals("${visaExpireMonth}")) {
-                cell.setCellValue(visaExpireDate.substring(5, 7));
-            }
-            if (cell.getStringCellValue().equals("${visaExpireDay}")) {
-                cell.setCellValue(visaExpireDate.substring(8));
-            }
-            //携帯電話
-            if (cell.getStringCellValue().equals("${tel}")) {
-                cell.setCellValue(jsonObject.getString("tel"));
-            }
-            //住居地
-            if (cell.getStringCellValue().equals("${address}")) {
-                cell.setCellValue(jsonObject.getString("address"));
-            }
-            //学校名
-            if (cell.getStringCellValue().equals("${graduateSchool}")) {
-                cell.setCellValue(jsonObject.getString("graduateSchool"));
-            }
-            //卒業年月
-            String graduateDate = jsonObject.getString("graduateDate");
-            if (cell.getStringCellValue().equals("${graduateYear}")) {
-                cell.setCellValue(graduateDate.substring(0, 4));
-            }
-            if (cell.getStringCellValue().equals("${graduateMonth}")) {
-                cell.setCellValue(graduateDate.substring(5));
-            }
-            //パスポートナンバー
-            if (cell.getStringCellValue().equals("${passportNumber}")) {
-                cell.setCellValue(jsonObject.getString("passportNumber"));
-            }
-            //有効期限
-            String passportExpireDate = jsonObject.getString("passportExpireDate");
-            if (cell.getStringCellValue().equals("${passportExpireYear}")) {
-                cell.setCellValue(passportExpireDate.substring(0, 4));
-            }
-            if (cell.getStringCellValue().equals("${passportExpireMonth}")) {
-                cell.setCellValue(passportExpireDate.substring(5, 7));
-            }
-            if (cell.getStringCellValue().equals("${passportExpireDay}")) {
-                cell.setCellValue(passportExpireDate.substring(8));
-            }
-
-
         }
     }
 }
