@@ -111,7 +111,7 @@ public class userController {
                 for (int k = 0; k < row.getLastCellNum(); k++) {
                     // 获取Cell
                     Cell cell = row.getCell(k);
-                    if (cell != null && cell.getCellTypeEnum() == CellType.STRING) {
+                    if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING) {
                         changeCellCount(cell, jsonObject);
                     }
                 }
